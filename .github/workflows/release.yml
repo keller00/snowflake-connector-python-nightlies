@@ -1,8 +1,9 @@
+---
 name: Release
 
 on:
     schedule:
-        - cron: '0 4 * * *'
+        - cron: 0 4 * * *
     workflow_dispatch:
 
 jobs:
@@ -13,11 +14,11 @@ jobs:
         steps:
             - uses: actions/checkout@v2
               with:
-                submodules: true
+                  submodules: true
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
-                python-version: '3.6'
+                  python-version: '3.6'
             - name: Update submodule
               run: |
                   git submodule update --remote upstream
@@ -29,5 +30,5 @@ jobs:
               run: echo TODO
             - uses: actions/upload-artifact@v2
               with:
-                name: modified_sourcecode
-                path: upstream
+                  name: modified_sourcecode
+                  path: upstream
