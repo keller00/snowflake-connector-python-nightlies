@@ -1,7 +1,7 @@
 name: release
 
 on:
-    schedule: 
+    schedule:
         - cron: '0 4 * * *'
     workflow_dispatch:
 
@@ -9,10 +9,15 @@ jobs:
     modify:
         name: Modifying source code
         runs-on: ubuntu-latest
+        depends-on: pre-commit
         steps:
             - uses: actions/checkout@v2
               with:
-                  submodules: true
+                submodules: true
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.6'
             - name: Update submodule
               run: |
                   git submodule update --remote upstream
@@ -26,4 +31,3 @@ jobs:
               with:
                 name: modified_sourcecode
                 path: upstream
-
