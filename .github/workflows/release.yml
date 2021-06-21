@@ -1,0 +1,29 @@
+name: release
+
+on:
+    schedule: 
+        - cron: '0 4 * * *'
+    workflow_dispatch:
+
+jobs:
+    modify:
+        name: Modifying source code
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  submodules: true
+            - name: Update submodule
+              run: |
+                  git submodule update --remote upstream
+                  git config user.name github-actions
+                  git config user.email github-actions@github.com
+                  git commit -am "Committing changes from upstream"
+                  git push
+            - name: Running modifications
+              run: echo TODO
+            - uses: actions/upload-artifact@v2
+              with:
+                name: modified_sourcecode
+                path: upstream
+
