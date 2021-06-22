@@ -10,7 +10,6 @@ jobs:
     modify:
         name: Modifying source code
         runs-on: ubuntu-latest
-        depends-on: pre-commit
         steps:
             - uses: actions/checkout@v2
               with:
