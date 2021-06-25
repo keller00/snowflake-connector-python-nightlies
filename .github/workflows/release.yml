@@ -19,6 +19,7 @@ jobs:
               with:
                   python-version: '3.6'
             - name: Update submodule
+              continue-on-error: true,
               run: |
                   git submodule update --remote upstream
                   git config user.name github-actions
