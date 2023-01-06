@@ -1,2 +1,3 @@
 # Snowflake connector nightly builds
-TODO
+
+This is an unofficial nightly build of `snowflake-connector-python`.
