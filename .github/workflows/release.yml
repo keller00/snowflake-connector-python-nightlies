@@ -41,13 +41,13 @@ jobs:
                 shell: bash
         strategy:
             matrix:
-                os: [windows-latest, macos-latest, linux-latest]
+                os: [windows-latest, macos-latest, ubuntu-latest]
                 python: ['37', '38', '39', '310']
         steps:
             - uses: actions/download-artifact@v3
               with:
                   name: modified_source
-            - if: matrix.os == 'linux-latest'
+            - if: matrix.os == 'ubuntu-latest'
               uses: docker/setup-qemu-action@v2
               with:
                   platforms: all
