@@ -25,9 +25,11 @@ jobs:
             - name: Running modifications
               run: |
                   sed -i \
-                    -e "s/name=\"snowflake-connector-python\"/name=\"snowflake-connector-python-nightly\"/g" \
                     -e "s/version=version/version=\"$(date +%Y.%m.%d)\"/g" upstream/setup.py \
                   upstream/setup.py
+                  sed -i \
+                    -e "s/name = snowflake-connector-python/name= snowflake-connector-python-nightly/" \
+                  upstream/setup.cfg
             - uses: actions/upload-artifact@v2
               with:
                   name: modified_source
