@@ -14,10 +14,6 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   submodules: true
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                  python-version: '3.7'
             - name: Update submodule
               continue-on-error: true
               run: |
@@ -62,7 +58,6 @@ jobs:
                   CIBW_ARCHS_WINDOWS: AMD64
                   CIBW_ARCHS_LINUX: x86_64 aarch64
               with:
-                  package-dir: upstream
                   output-dir: dist
             - name: Show built wheels
               run: ls -lh dist
