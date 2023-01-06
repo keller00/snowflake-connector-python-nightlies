@@ -29,6 +29,8 @@ jobs:
                   upstream/setup.py
                   sed -i \
                     -e "s/name = snowflake-connector-python/name= snowflake-connector-python-nightly/" \
+                    -e "s/description = .*/description = Nigthly build of Snowflake Connector for Python/" \
+                    -e "s/Source=.*/Source=https:\/\/github.com\/keller00\/snowflake-connector-python-nightlies\//" \
                   upstream/setup.cfg
             - uses: actions/upload-artifact@v2
               with:
