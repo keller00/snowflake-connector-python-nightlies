@@ -37,7 +37,7 @@ jobs:
                   name: modified_source
                   path: upstream
     build:
-        name: Build py${{ matrix.python }} ${{ matrix.os.build }}
+        name: Build py${{ matrix.python }} ${{ matrix.os }}
         runs-on: ${{ matrix.os }}
         needs: modify
         defaults:
@@ -51,7 +51,11 @@ jobs:
             - uses: actions/download-artifact@v3
               with:
                   name: modified_source
-            - uses: pypa/cibuildwheel@2.11.4
+            - if: matrix.os == 'linux-latest'
+              uses: docker/setup-qemu-action@v2
+              with:
+                  platforms: all
+            - uses: pypa/cibuildwheel@v2.11.4
               env:
                   CIBW_BUILD: cp${{ matrix.python }}-*
                   CIBW_ARCHS_MACOS: x86_64 arm64 universal2
