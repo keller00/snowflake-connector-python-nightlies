@@ -17,18 +17,51 @@ jobs:
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
-                  python-version: '3.6'
+                  python-version: '3.7'
             - name: Update submodule
               continue-on-error: true
               run: |
                   git submodule update --remote upstream
-                  git config user.name github-actions
-                  git config user.email github-actions@github.com
+                  git config user.name "Sophie Keller"
+                  git config user.email 90475612+skeller00@users.noreply.github.com
                   git commit -am "Committing changes from upstream"
                   git push
             - name: Running modifications
-              run: echo TODO
+              run: |
+                  sed -i \
+                    -e "s/name=\"snowflake-connector-python\"/name=\"snowflake-connector-python-nightly\"/g" \
+                    -e "s/version=version/version=\"$(date +%Y.%m.%d)\"/g" upstream/setup.py \
+                  upstream/setup.py
             - uses: actions/upload-artifact@v2
               with:
-                  name: modified_sourcecode
+                  name: modified_source
                   path: upstream
+    build:
+        name: Build py${{ matrix.python }} ${{ matrix.os.build }}
+        runs-on: ${{ matrix.os }}
+        needs: modify
+        defaults:
+            run:
+                shell: bash
+        strategy:
+            matrix:
+                os: [windows-latest, macos-latest, linux-latest]
+                python: ['37', '38', '39', '310']
+        steps:
+            - uses: actions/download-artifact@v3
+              with:
+                  name: modified_source
+            - uses: pypa/cibuildwheel@2.11.4
+              env:
+                  CIBW_BUILD: cp${{ matrix.python }}-*
+                  CIBW_ARCHS_MACOS: x86_64 arm64 universal2
+                  CIBW_ARCHS_WINDOWS: AMD64
+                  CIBW_ARCHS_LINUX: x86_64 aarch64
+              with:
+                  package-dir: upstream
+                  output-dir: dist
+            - name: Show built wheels
+              run: ls -lh dist
+            - uses: actions/upload-artifact@v3
+              with:
+                  name: wheels
