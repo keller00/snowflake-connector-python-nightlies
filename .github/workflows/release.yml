@@ -55,6 +55,7 @@ jobs:
                   platforms: all
             - uses: pypa/cibuildwheel@v2.11.4
               env:
+                  CIBW_SKIP: '*-musllinux*'
                   CIBW_BUILD: cp${{ matrix.python }}-*
                   CIBW_ARCHS_MACOS: x86_64 arm64 universal2
                   CIBW_ARCHS_WINDOWS: AMD64
@@ -77,3 +78,8 @@ jobs:
                   name: wheels
             - name: Show all built wheels
               run: ls -lh .
+            - name: Publish a Python distribution to PyPI
+              uses: pypa/gh-action-pypi-publish@release/v1.6.4
+              with:
+                  password: ${{ secrets.PYPI_API_TOKEN }}
+                  packages_dir: .
