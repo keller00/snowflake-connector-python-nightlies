@@ -36,7 +36,27 @@ jobs:
               with:
                   name: modified_source
                   path: upstream
-    build:
+    build-sdist:
+        name: Build sdist
+        runs-on: ubuntu-latest
+        needs: modify
+        steps:
+            - uses: actions/setup-python@v4
+              with:
+                  python-version: 3.x
+            - uses: actions/download-artifact@v3
+              with:
+                  name: modified_source
+            - name: Build sdist
+              run: python setup.py sdist
+            - name: Show built sdist
+              run: ls -lh dist
+            - uses: actions/upload-artifact@v3
+              with:
+                  path: dist
+                  name: sdist
+
+    build-wheel:
         name: Build py${{ matrix.python }} ${{ matrix.os }}
         runs-on: ${{ matrix.os }}
         needs: modify
@@ -73,11 +93,14 @@ jobs:
     release:
         name: Release built wheels
         runs-on: ubuntu-latest
-        needs: build
+        needs: [build-wheel, build-sdist]
         steps:
             - uses: actions/download-artifact@v3
               with:
                   name: wheels
+            - uses: actions/download-artifact@v3
+              with:
+                  name: sdist
             - name: Show all built wheels
               run: ls -lh .
             - name: Publish a Python distribution to PyPI
