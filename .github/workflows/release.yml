@@ -7,7 +7,7 @@ on:
     workflow_dispatch:
         inputs:
             force:
-                description: Whether to overwrite build and release skipping
+                description: force build
                 required: true
                 type: boolean
                 default: false
