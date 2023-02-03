@@ -5,6 +5,12 @@ on:
     schedule:
         - cron: 0 4 * * *
     workflow_dispatch:
+        inputs:
+            force:
+                description: Whether to overwrite build and release skipping
+                required: true
+                type: boolean
+                default: false
 
 jobs:
     modify:
@@ -19,6 +25,8 @@ jobs:
             - name: Update submodule
               continue-on-error: true
               id: update
+              env:
+                  FORCE_BUILD: ${{ github.event.inputs.force }}
               run: |
                   git submodule update --remote upstream
                   git config user.name "Sophie Keller"
@@ -28,7 +36,7 @@ jobs:
                     git push
                   else
                     echo "There are no new commits, I'll go back to sleep :sleeping:" >> $GITHUB_STEP_SUMMARY
-                    echo "new_commits=false" >> $GITHUB_OUTPUT
+                    echo "new_commits=$FORCE_BUILD" >> $GITHUB_OUTPUT
                   fi
             - name: Running modifications
               if: steps.update.outputs.new_commits == 'true'
