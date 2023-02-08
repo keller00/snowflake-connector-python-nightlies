@@ -4,3 +4,4 @@
 [![PyPi](https://img.shields.io/pypi/v/snowflake-connector-python-nightly.svg)](https://pypi.python.org/pypi/snowflake-connector-python-nightly/)
 
 This is an unofficial nightly build of [snowflake-connector-python](https://github.com/snowflakedb/snowflake-connector-python) by the official dev(s).
+Note that release only happens on days when new commits were added to save space on PyPi.
