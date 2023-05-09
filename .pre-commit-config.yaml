@@ -7,6 +7,6 @@ repos:
           - id: end-of-file-fixer
           - id: trailing-whitespace
     - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
-      rev: 0.2.2 # or specific tag
+      rev: 0.2.3 # or specific tag
       hooks:
           - id: yamlfmt
