@@ -117,16 +117,40 @@ jobs:
         needs: [build-wheel, build-sdist]
         if: needs.build-wheel.result == 'success' && needs.build-sdist.result == 'success'
         steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v4
+              with:
+                  python-version: 3.x
             - uses: actions/download-artifact@v3
               with:
                   name: wheels
+                  path: dist
             - uses: actions/download-artifact@v3
               with:
                   name: sdist
-            - name: Show all built wheels
-              run: ls -lh .
+                  path: dist
+            - name: Show all built artifacts
+              run: ls -lh dist
             - name: Publish a Python distribution to PyPI
+              continue-on-error: true
+              id: upload
               uses: pypa/gh-action-pypi-publish@release/v1
               with:
                   password: ${{ secrets.PYPI_API_TOKEN }}
-                  packages-dir: .
+                  packages_dir: dist
+            - name: Make space
+              if: steps.upload.outcome == 'failure'
+              shell: bash
+              run: |
+                  pip install -r scripts/requirements.txt
+                  python scripts/delete_old_releases.py 2
+              env:
+                  PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+                  PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+            - name: Publish a Python distribution to PyPI again
+              id: upload2
+              if: steps.upload.outcome == 'failure'
+              uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  password: ${{ secrets.PYPI_API_TOKEN }}
+                  packages_dir: dist
