@@ -49,7 +49,7 @@ jobs:
                     -e "s/description = .*/description = Nigthly build of Snowflake Connector for Python/" \
                     -e "s/Source=.*/Source=https:\/\/github.com\/keller00\/snowflake-connector-python-nightlies\//" \
                   upstream/setup.cfg
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v3
               if: steps.update.outputs.new_commits == 'true'
               with:
                   name: modified_source
