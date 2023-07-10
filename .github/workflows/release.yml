@@ -116,6 +116,9 @@ jobs:
         runs-on: ubuntu-latest
         needs: [build-wheel, build-sdist]
         if: needs.build-wheel.result == 'success' && needs.build-sdist.result == 'success'
+        permissions:
+            # IMPORTANT: this permission is mandatory for trusted publishing
+            id-token: write
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-python@v4
@@ -135,9 +138,6 @@ jobs:
               continue-on-error: true
               id: upload
               uses: pypa/gh-action-pypi-publish@release/v1
-              with:
-                  password: ${{ secrets.PYPI_API_TOKEN }}
-                  packages_dir: dist
             - name: Make space
               if: steps.upload.outcome == 'failure'
               shell: bash
@@ -151,6 +151,3 @@ jobs:
               id: upload2
               if: steps.upload.outcome == 'failure'
               uses: pypa/gh-action-pypi-publish@release/v1
-              with:
-                  password: ${{ secrets.PYPI_API_TOKEN }}
-                  packages_dir: dist
