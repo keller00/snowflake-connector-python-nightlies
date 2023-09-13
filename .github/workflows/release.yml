@@ -92,7 +92,7 @@ jobs:
               with:
                   name: modified_source
             - if: matrix.os == 'ubuntu-latest'
-              uses: docker/setup-qemu-action@v2
+              uses: docker/setup-qemu-action@v3
               with:
                   platforms: all
             - uses: pypa/cibuildwheel@v2.15.0
