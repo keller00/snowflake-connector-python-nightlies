@@ -78,8 +78,8 @@ jobs:
                   name: sdist
 
     build-wheel:
-        name: Build py${{ matrix.python }} ${{ matrix.os }}
-        runs-on: ${{ matrix.os }}
+        name: Build ${{ matrix.os }} py${{ matrix.python }}
+        runs-on: ${{ matrix.os }}-latest
         needs: modify
         if: needs.modify.outputs.new_commits == 'true' && needs.modify.result == 'success'
         defaults:
@@ -87,13 +87,13 @@ jobs:
                 shell: bash
         strategy:
             matrix:
-                os: [windows-latest, macos-latest, ubuntu-latest]
+                os: [windows, macos, ubuntu]
                 python: ['38', '39', '310', '311']
         steps:
             - uses: actions/download-artifact@v4
               with:
                   name: modified_source
-            - if: matrix.os == 'ubuntu-latest'
+            - if: matrix.os == 'ubuntu'
               uses: docker/setup-qemu-action@v3
               with:
                   platforms: all
@@ -112,7 +112,7 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                   path: dist
-                  name: wheels
+                  name: wheel-${{ matrix.os }}-py${{ matrix.python }}
     release:
         name: Release built wheels
         runs-on: ubuntu-latest
@@ -128,8 +128,9 @@ jobs:
                   python-version: 3.x
             - uses: actions/download-artifact@v4
               with:
-                  name: wheels
                   path: dist
+                  pattern: wheel-*
+                  merge-multiple: true
             - uses: actions/download-artifact@v4
               with:
                   name: sdist
