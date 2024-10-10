@@ -97,7 +97,7 @@ jobs:
               uses: docker/setup-qemu-action@v3
               with:
                   platforms: all
-            - uses: pypa/cibuildwheel@v2.21.2
+            - uses: pypa/cibuildwheel@v2.21.3
               env:
                   CIBW_SKIP: '*-musllinux*'
                   CIBW_BUILD: cp${{ matrix.python }}-*
