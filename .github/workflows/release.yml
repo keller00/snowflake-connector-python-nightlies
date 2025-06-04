@@ -144,6 +144,8 @@ jobs:
               continue-on-error: true
               id: upload
               uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  attestations: false
             - name: Make space
               if: steps.upload.outcome == 'failure'
               shell: bash
@@ -157,3 +159,5 @@ jobs:
               id: upload2
               if: steps.upload.outcome == 'failure'
               uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  attestations: false
