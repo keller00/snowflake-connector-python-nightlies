@@ -11,11 +11,11 @@ PACKAGE_NAME = "snowflake-connector-python-nightly"
 HTTPX_CLIENT = httpx.Client(
     base_url="https://pypi.org",
     headers={
-        "Accepts": "application/json"
+        "Accepts": "application/json",
     },
     follow_redirects=True,
 )
-CSRF_TOKEN_RE = re.compile(r"<input name=\"csrf_token\" type=\"hidden\" value=\"(.+?)\">")
+CSRF_TOKEN_RE = re.compile(r"<input\s+name=\"csrf_token\"\s+type=\"hidden\"\s+value=\"(.+?)\">")
 
 
 def extract_csrf_token(site: str) -> str:
@@ -58,9 +58,9 @@ def load_dotenv_file(path: str) -> None:
 
 
 def delete_n_oldest_releases(
-        package_name: str,
-        number: int,
-        dry_run: bool = True,
+    package_name: str,
+    number: int,
+    dry_run: bool = True,
 ) -> None:
     releases = get_releases(package_name)
 
@@ -72,14 +72,14 @@ def delete_n_oldest_releases(
     login_resp = HTTPX_CLIENT.post(
         "/account/login/",
         data={
-            "csrf_token": extract_csrf_token(HTTPX_CLIENT.get("/account/login").text),
+            "csrf_token": extract_csrf_token(HTTPX_CLIENT.get("/account/login/").text),
             "username": username,
             "password": password,
         },
         headers={"referer": f"{HTTPX_CLIENT.base_url}/account/login/"}
     )
     if login_resp.url.path == "/account/two-factor/":
-        HTTPX_CLIENT.post(
+        t_factor_resp = HTTPX_CLIENT.post(
             login_resp.url,
             data={
                 "csrf_token": extract_csrf_token(login_resp.text),
@@ -88,6 +88,8 @@ def delete_n_oldest_releases(
             },
             headers={"referer": str(login_resp.url)}
         )
+        assert t_factor_resp.status_code == 200, f"after logging in we received status code: {t_factor_resp.status_code}"
+    assert login_resp.status_code == 200, f"after logging in we received status code: {login_resp.status_code}"
     for version in releases[:number]:
         if dry_run:
             print(f"{version} would be removed, if this wasn't a dry-run")
