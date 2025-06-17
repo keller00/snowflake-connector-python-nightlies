@@ -79,7 +79,7 @@ jobs:
 
     build-wheel:
         name: Build ${{ matrix.os }} py${{ matrix.python }}
-        runs-on: ${{ matrix.os }}
+        runs-on: ${{ matrix.os.runs_on }}
         needs: modify
         if: needs.modify.outputs.new_commits == 'true' && needs.modify.result == 'success'
         defaults:
@@ -87,8 +87,17 @@ jobs:
                 shell: bash
         strategy:
             matrix:
-                # macos-13 is an intel runner, macos-14 is apple silicon
-                os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-13, macos-14]
+                os: [
+                    - runs_on: ubuntu-latest
+                      builds: manylinux_x86_64
+                    - runs_on: ubuntu-24.04-arm
+                      builds: manylinux_aarch64
+                    - runs-on: windows-latest
+                      builds: win_amd64
+                    - runs_on: macos-13
+                      builds: x86_64
+                    - runs_on: macos-14
+                      builds: arm64
                 python: ['39', '310', '311', '312', '313']
         steps:
             - uses: actions/download-artifact@v4
@@ -97,10 +106,7 @@ jobs:
             - uses: pypa/cibuildwheel@v3.0.0
               env:
                   CIBW_SKIP: '*-musllinux*'
-                  CIBW_BUILD: cp${{ matrix.python }}-*
-                  CIBW_ARCHS_MACOS: x86_64 arm64 universal2
-                  CIBW_ARCHS_WINDOWS: AMD64
-                  CIBW_ARCHS_LINUX: x86_64 aarch64
+                  CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.os.builds }}
                   MACOSX_DEPLOYMENT_TARGET: 10.14
               with:
                   output-dir: dist
