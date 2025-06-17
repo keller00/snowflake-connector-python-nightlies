@@ -115,7 +115,7 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                   path: dist
-                  name: wheel-${{ matrix.os }}-py${{ matrix.python }}
+                  name: wheel-cp${{ matrix.python }}-${{ matrix.os.builds }}
     release:
         name: Release built wheels
         runs-on: ubuntu-latest
