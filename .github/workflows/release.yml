@@ -78,8 +78,8 @@ jobs:
                   name: sdist
 
     build-wheel:
-        name: Build cp${{ matrix.python }}-${{ matrix.os.builds }}
-        runs-on: ${{ matrix.os.runs_on }}
+        name: Build wheels for ${{ matrix.os }}
+        runs-on: ${{ matrix.runs-on }}
         needs: modify
         if: needs.modify.outputs.new_commits == 'true' && needs.modify.result == 'success'
         defaults:
@@ -87,18 +87,21 @@ jobs:
                 shell: bash
         strategy:
             matrix:
-                os:
-                    - runs_on: ubuntu-latest
-                      builds: manylinux_x86_64
-                    - runs_on: ubuntu-24.04-arm
-                      builds: manylinux_aarch64
-                    - runs_on: windows-latest
-                      builds: win_amd64
-                    - runs_on: macos-13
-                      builds: macosx_x86_64
-                    - runs_on: macos-14
-                      builds: macosx_arm64
-                python: ['39', '310', '311', '312', '313']
+                include:
+                  - os: linux-intel
+                    runs-on: ubuntu-latest
+                  - os: linux-arm
+                    runs-on: ubuntu-24.04-arm
+                  - os: windows-intel
+                    runs-on: windows-latest
+                  - os: windows-arm
+                    runs-on: windows-11-arm
+                  - os: macos-intel
+                    # macos-13 was the last x86_64 runner
+                    runs-on: macos-13
+                  - os: macos-arm
+                    # macos-14+ (including latest) are ARM64 runners
+                    runs-on: macos-latest
         steps:
             - uses: actions/download-artifact@v4
               with:
@@ -106,8 +109,6 @@ jobs:
             - uses: pypa/cibuildwheel@v3.0.0
               env:
                   CIBW_SKIP: '*-musllinux*'
-                  CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.os.builds }}
-                  MACOSX_DEPLOYMENT_TARGET: 10.14
               with:
                   output-dir: dist
             - name: Show built wheels
