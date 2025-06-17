@@ -92,7 +92,7 @@ jobs:
                       builds: manylinux_x86_64
                     - runs_on: ubuntu-24.04-arm
                       builds: manylinux_aarch64
-                    - runs-on: windows-latest
+                    - runs_on: windows-latest
                       builds: win_amd64
                     - runs_on: macos-13
                       builds: x86_64
