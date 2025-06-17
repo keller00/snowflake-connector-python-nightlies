@@ -78,7 +78,7 @@ jobs:
                   name: sdist
 
     build-wheel:
-        name: Build ${{ matrix.os }} py${{ matrix.python }}
+        name: Build cp${{ matrix.python }}-${{ matrix.os.builds }}
         runs-on: ${{ matrix.os.runs_on }}
         needs: modify
         if: needs.modify.outputs.new_commits == 'true' && needs.modify.result == 'success'
