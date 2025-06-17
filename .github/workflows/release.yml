@@ -78,8 +78,8 @@ jobs:
                   name: sdist
 
     build-wheel:
-        name: Build wheels for ${{ matrix.os }}
-        runs-on: ${{ matrix.runs-on }}
+        name: Build ${{ matrix.os }} py${{ matrix.python }}
+        runs-on: ${{ matrix.os }}-latest
         needs: modify
         if: needs.modify.outputs.new_commits == 'true' && needs.modify.result == 'success'
         defaults:
@@ -87,28 +87,27 @@ jobs:
                 shell: bash
         strategy:
             matrix:
-                include:
-                  - os: linux-intel
-                    runs-on: ubuntu-latest
-                  - os: linux-arm
-                    runs-on: ubuntu-24.04-arm
-                  - os: windows-intel
-                    runs-on: windows-latest
-                  - os: windows-arm
-                    runs-on: windows-11-arm
-                  - os: macos-intel
-                    # macos-13 was the last x86_64 runner
-                    runs-on: macos-13
-                  - os: macos-arm
-                    # macos-14+ (including latest) are ARM64 runners
-                    runs-on: macos-latest
+                os: [windows, macos, ubuntu]
+                python: ['39', '310', '311', '312', '313']
         steps:
             - uses: actions/download-artifact@v4
               with:
                   name: modified_source
-            - uses: pypa/cibuildwheel@v3.0.0
+            - if: matrix.os == 'ubuntu'
+              uses: docker/setup-qemu-action@v3
+              with:
+                  # xref https://github.com/docker/setup-qemu-action/issues/188
+                  # xref https://github.com/tonistiigi/binfmt/issues/215
+                  image: tonistiigi/binfmt:qemu-v8.1.5
+                  platforms: all
+            - uses: pypa/cibuildwheel@v2.23.3
               env:
                   CIBW_SKIP: '*-musllinux*'
+                  CIBW_BUILD: cp${{ matrix.python }}-*
+                  CIBW_ARCHS_MACOS: x86_64 arm64 universal2
+                  CIBW_ARCHS_WINDOWS: AMD64
+                  CIBW_ARCHS_LINUX: x86_64 aarch64
+                  MACOSX_DEPLOYMENT_TARGET: 10.14
               with:
                   output-dir: dist
             - name: Show built wheels
@@ -116,7 +115,7 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                   path: dist
-                  name: wheel-${{ matrix.os }}
+                  name: wheel-${{ matrix.os }}-py${{ matrix.python }}
     release:
         name: Release built wheels
         runs-on: ubuntu-latest
