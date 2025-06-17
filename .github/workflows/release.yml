@@ -94,13 +94,6 @@ jobs:
             - uses: actions/download-artifact@v4
               with:
                   name: modified_source
-            - if: matrix.os == 'ubuntu'
-              uses: docker/setup-qemu-action@v3
-              with:
-                  # xref https://github.com/docker/setup-qemu-action/issues/188
-                  # xref https://github.com/tonistiigi/binfmt/issues/215
-                  image: tonistiigi/binfmt:qemu-v8.1.5
-                  platforms: all
             - uses: pypa/cibuildwheel@v3.0.0
               env:
                   CIBW_SKIP: '*-musllinux*'
