@@ -87,7 +87,7 @@ jobs:
                 shell: bash
         strategy:
             matrix:
-                os: [
+                os:
                     - runs_on: ubuntu-latest
                       builds: manylinux_x86_64
                     - runs_on: ubuntu-24.04-arm
