@@ -60,7 +60,7 @@ jobs:
         needs: modify
         if: needs.modify.outputs.new_commits == 'true' && needs.modify.result == 'success'
         steps:
-            - uses: actions/setup-python@v5
+            - uses: actions/setup-python@v6
               with:
                   python-version: 3.x
             - uses: actions/download-artifact@v5
@@ -126,7 +126,7 @@ jobs:
             id-token: write
         steps:
             - uses: actions/checkout@v5
-            - uses: actions/setup-python@v5
+            - uses: actions/setup-python@v6
               with:
                   python-version: 3.x
             - uses: actions/download-artifact@v5
