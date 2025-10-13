@@ -100,7 +100,7 @@ jobs:
                   # xref https://github.com/tonistiigi/binfmt/issues/215
                   image: tonistiigi/binfmt:qemu-v8.1.5
                   platforms: all
-            - uses: pypa/cibuildwheel@v2.23.3
+            - uses: pypa/cibuildwheel@v3.2.1
               env:
                   CIBW_SKIP: '*-musllinux*'
                   CIBW_BUILD: cp${{ matrix.python }}-*
