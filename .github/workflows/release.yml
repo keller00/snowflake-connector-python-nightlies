@@ -63,7 +63,7 @@ jobs:
             - uses: actions/setup-python@v6
               with:
                   python-version: 3.x
-            - uses: actions/download-artifact@v6
+            - uses: actions/download-artifact@v7
               with:
                   name: modified_source
             - name: Install build tool
@@ -90,7 +90,7 @@ jobs:
                 os: [windows, macos, ubuntu]
                 python: ['39', '310', '311', '312', '313']
         steps:
-            - uses: actions/download-artifact@v6
+            - uses: actions/download-artifact@v7
               with:
                   name: modified_source
             - if: matrix.os == 'ubuntu'
@@ -129,12 +129,12 @@ jobs:
             - uses: actions/setup-python@v6
               with:
                   python-version: 3.x
-            - uses: actions/download-artifact@v6
+            - uses: actions/download-artifact@v7
               with:
                   path: dist
                   pattern: wheel-*
                   merge-multiple: true
-            - uses: actions/download-artifact@v6
+            - uses: actions/download-artifact@v7
               with:
                   name: sdist
                   path: dist
