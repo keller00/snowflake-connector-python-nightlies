@@ -49,7 +49,7 @@ jobs:
                     -e "s/description = .*/description = Nigthly build of Snowflake Connector for Python/" \
                     -e "s/Source=.*/Source=https:\/\/github.com\/keller00\/snowflake-connector-python-nightlies\//" \
                   upstream/setup.cfg
-            - uses: actions/upload-artifact@v5
+            - uses: actions/upload-artifact@v6
               if: steps.update.outputs.new_commits == 'true'
               with:
                   name: modified_source
@@ -72,7 +72,7 @@ jobs:
               run: python -m build --sdist --outdir dist
             - name: Show built sdist
               run: ls -lh dist
-            - uses: actions/upload-artifact@v5
+            - uses: actions/upload-artifact@v6
               with:
                   path: dist
                   name: sdist
@@ -112,7 +112,7 @@ jobs:
                   output-dir: dist
             - name: Show built wheels
               run: ls -lh dist
-            - uses: actions/upload-artifact@v5
+            - uses: actions/upload-artifact@v6
               with:
                   path: dist
                   name: wheel-${{ matrix.os }}-py${{ matrix.python }}
