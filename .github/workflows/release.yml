@@ -88,7 +88,7 @@ jobs:
         strategy:
             matrix:
                 os: [windows, macos, ubuntu]
-                python: ['39', '310', '311', '312', '313']
+                python: ['310', '311', '312', '313', '314']
         steps:
             - uses: actions/download-artifact@v8
               with:
